@@ -6,6 +6,7 @@ bot.
 """
 from telegram.ext import Updater, CommandHandler
 from subprocess import call
+from paramiko import client
 import commands
 import os
 # Define a few command handlers. These usually take the two arguments bot and
@@ -46,6 +47,11 @@ def unset(bot, update, chat_data):
     job.schedule_removal()
     del chat_data['job']
     update.message.reply_text('Timer successfully unset!')
+
+def revive (bot,update,chat_data):
+   ssh = paramiko.SSHClient()
+   ssh.connect(server, username=username, password=password)
+   ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command("psql -U factory -d factory -f /tmp/data.sql")
 
 def main():
     """Run bot."""
