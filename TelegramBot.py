@@ -7,7 +7,7 @@ bot.
 from telegram.ext import Updater, CommandHandler
 from subprocess import call
 from paramiko import client
-import commands
+import subprocess
 import os
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
@@ -22,7 +22,7 @@ def start(bot, update,job_queue,chat_data):
          return
     except:
          job = job_queue.run_once(alarm,86400, context=chat_id)
-	 sendStatus(bot,chat_id)
+    sendStatus(bot,chat_id)
 
 def alarm(bot, job):
     """Send the alarm message."""
