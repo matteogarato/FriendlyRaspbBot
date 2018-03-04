@@ -1,12 +1,23 @@
 import smtplib
+import configparser
+import logging
 
-senderAdress="email@gmail.com"
-server = smtplib.SMTP('smtp.gmail.com', 587)
-server.login(senderAdress, "password")
-bodyFile = open(“BodyMail.text”, “r”) 
-sendAdresses=open(“Adresses.text”, “r”)
-msg = bodyFile.read() 
-adresses=sendAdresses.read()
-adresses=adresses.splitlines()
-for (adress in range adresses):
-	server.sendmail(senderAdress, adress, msg.format(adress))
+
+def main():
+    try:
+        configParser = configparser.RawConfigParser()
+        configFilePath = r'bulkMailSender.config'
+        configParser.read(configFilePath)
+        server = smtplib.SMTP(configParser.get('SMTP', 'smtpAddress'), configParser.getint('SMTP', 'smtpPort'))
+        senderaddress = configParser.get('SMTP', 'senderAddress')
+        server.login(senderaddress, "password")
+        msg = configParser.get('MAIL', 'body')
+        addresses = configParser.get('MAIL', 'addresses').split('\n')
+        for address in addresses:
+            server.sendmail(senderaddress, address, msg.format(address))
+    except Exception as e:
+        logging.exception('ERROR: ' + str(e))
+
+
+if __name__ == "__main__":
+    main()
