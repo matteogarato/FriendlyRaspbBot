@@ -19,7 +19,7 @@ def main():
         msgText = configParser.get('MAIL', 'body')
         addresses = configParser.get('MAIL', 'addresses').split('\n')
         for address in addresses:
-            companyName=address.split('@')[1]
+            companyName=address.split('@')[1].split('.')[0]
             msgText=msgText.format(company=companyName)
             msg = MIMEMultipart()
             msg['From'] = senderaddress
