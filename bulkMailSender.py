@@ -2,8 +2,8 @@ import smtplib
 import configparser
 import logging
 import time
-from email.MIMEMultipart import MIMEMultipart
-from email.MIMEText import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 def main():
     try:
@@ -14,7 +14,7 @@ def main():
         server = smtplib.SMTP(smtpAddress)
         server.starttls()
         senderaddress = configParser.get('SMTP', 'senderAddress')
-        password=raw_input("inserire la password per l'indirizzo {senderAddres}: ".format(senderAddres=senderaddress))
+        password=input("inserire la password per l'indirizzo {senderAddres}: ".format(senderAddres=senderaddress))
         server.login(senderaddress, password)
         msgText = configParser.get('MAIL', 'body')
         addresses = configParser.get('MAIL', 'addresses').split('\n')
@@ -24,7 +24,7 @@ def main():
             msg = MIMEMultipart()
             msg['From'] = senderaddress
             msg['To'] = address
-            msg.attach(MIMEText(msgText, 'plain'))
+            msg.attach(MIMEText(msgText, 'html'))
             msg['Subject'] = configParser.get('MAIL', 'object')
             server.sendmail(senderaddress, address, msg.as_string())
             time.sleep(configParser.getint('SMTP', 'mailBreak'))
