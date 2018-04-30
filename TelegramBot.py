@@ -4,39 +4,52 @@
 Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
+import os,commands
+import pyspeedtest
 from telegram.ext import Updater, CommandHandler
 from subprocess import call
-from paramiko import client
-import subprocess
-import os
+""""from paramiko import client"""""
+
+
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
-def start(bot, update,job_queue,chat_data):
+def start(bot, update, job_queue, chat_data):
     update.message.reply_text('Hi! Started!')
     chat_id = update.message.chat_id
     if 'job' in chat_data:
-         update.message.reply_text('you already have an active timer')
-         return
+        update.message.reply_text('you already have an active timer')
+        return
     try:
-         job = chat_data['job']
-         return
+        job = chat_data['job']
+        return
     except:
-         job = job_queue.run_once(alarm,86400, context=chat_id)
-    sendStatus(bot,chat_id)
+        job = job_queue.run_once(alarm, 86400, context=chat_id)
+    sendStatus(bot, chat_id)
+
 
 def alarm(bot, job):
     """Send the alarm message."""
-    sendStatus(bot,job.context)
+    sendStatus(bot, job.context)
+
 
 def getstatus(bot, update):
-     chat_id = update.message.chat_id
-     call(["fswebcam", "-d","/dev/video0","-F 150", "-r", "1280x720", "666.jpg"])
-     bot.send_photo(chat_id=chat_id, photo=open('666.jpg', 'rb'))
-     os.remove('666.jpg')
-     sendStatus(bot,chat_id)
+    chat_id = update.message.chat_id
+    call(["fswebcam", "-d", "/dev/video0", "-F 150", "-r", "1280x720", "666.jpg"])
+    bot.send_photo(chat_id=chat_id, photo=open('666.jpg', 'rb'))
+    os.remove('666.jpg')
+    sendStatus(bot, chat_id)
 
-def sendStatus(bot,chat_id):
-    bot.send_message(chat_id,'Ip={}\n{}\nuptime={}\n'.format(commands.getoutput('hostname -I'),commands.getoutput('/opt/vc/bin/vcgencmd measure_temp'),commands.getoutput('uptime') ))
+
+def sendStatus(bot, chat_id):
+    st = pyspeedtest.SpeedTest()
+    bot.send_message(chat_id, 'Ip={}\n{}\nUptime={}\nPing={}\nDW={} - UP={}'.format(commands.getoutput('hostname -I'),
+                                                              commands.getoutput('/opt/vc/bin/vcgencmd measure_temp'),
+                                                              commands.getoutput('uptime'),
+                                                              st.ping(),
+                                                              st.download(),
+                                                              st.upload()
+                                                              ))
+
 
 def unset(bot, update, chat_data):
     """Remove the job if the user changed their mind."""
@@ -48,20 +61,22 @@ def unset(bot, update, chat_data):
     del chat_data['job']
     update.message.reply_text('Timer successfully unset!')
 
-def revive (bot,update,chat_data):
-   ssh = paramiko.SSHClient()
-   ssh.connect(server, username=username, password=password)
-   ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command("psql -U factory -d factory -f /tmp/data.sql")
+
+#def revive(bot, update, chat_data):
+#    ssh = paramiko.SSHClient()
+#    ssh.connect(server, username=username, password=password)
+#    ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command("psql -U factory -d factory -f /tmp/data.sql")
+
 
 def main():
     """Run bot."""
-    updater = Updater("EHEIDONTPOSTTHEBOTID")#sooooooo smart!!
+    updater = Updater("") 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
     # on different commands - answer in Telegram
-    dp.add_handler(CommandHandler("start", start,pass_job_queue=True, pass_chat_data=True))
+    dp.add_handler(CommandHandler("start", start, pass_job_queue=True, pass_chat_data=True))
     dp.add_handler(CommandHandler("help", start))
-    dp.add_handler(CommandHandler("getstatus",getstatus))
+    dp.add_handler(CommandHandler("getstatus", getstatus))
     dp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
     # Start the Bot
     updater.start_polling()
@@ -72,4 +87,4 @@ def main():
 
 
 if __name__ == '__main__':
-	main()
+    main()
