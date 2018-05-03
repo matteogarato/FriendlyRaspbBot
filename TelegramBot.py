@@ -6,6 +6,7 @@ bot.
 """
 import os,commands
 import pyspeedtest
+import random
 from telegram.ext import Updater, CommandHandler
 from subprocess import call
 """"from paramiko import client"""""
@@ -40,14 +41,38 @@ def getstatus(bot, update):
     sendStatus(bot, chat_id)
 
 
+def makecoffe(bot,update):
+    print("makecoffe enter")
+    chat_id=update.message.chat_id
+    print(chat_id)
+    insults=["ranciate","va in cueo de to mare!","alsa el cueo e movate!","assame star","moeaghe!","va in cueo va!"]
+    rand=random.randint(0,len(insults)-1)
+    print(rand)
+    print(insults[rand])
+    bot.send_message(chat_id,insults[rand])
+
+
+
 def sendStatus(bot, chat_id):
-    st = pyspeedtest.SpeedTest()
+        st = pyspeedtest.SpeedTest("speedtestpd1.telecomitalia.it:8080")
+    try:
+     ping=st.ping()
+    except:
+     ping="error on ping"
+    try:
+     download=st.download()
+    except:
+     download="error on download"
+    try:
+     upload=st.upload()
+    except:
+     upload="error on upload"
     bot.send_message(chat_id, 'Ip={}\n{}\nUptime={}\nPing={}\nDW={} - UP={}'.format(commands.getoutput('hostname -I'),
                                                               commands.getoutput('/opt/vc/bin/vcgencmd measure_temp'),
                                                               commands.getoutput('uptime'),
-                                                              st.ping(),
-                                                              st.download(),
-                                                              st.upload()
+                                                              ping,
+                                                              download,
+                                                              upload
                                                               ))
 
 
@@ -77,6 +102,7 @@ def main():
     dp.add_handler(CommandHandler("start", start, pass_job_queue=True, pass_chat_data=True))
     dp.add_handler(CommandHandler("help", start))
     dp.add_handler(CommandHandler("getstatus", getstatus))
+    dp.add_handler(CommandHandler("makecoffe", makecoffe))
     dp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
     # Start the Bot
     updater.start_polling()
