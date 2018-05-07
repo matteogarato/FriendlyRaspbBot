@@ -4,7 +4,8 @@
 Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
-import os,commands
+import os
+import commands
 import pyspeedtest
 import random
 from telegram.ext import Updater, CommandHandler
@@ -12,8 +13,9 @@ from subprocess import call
 """"from paramiko import client"""""
 
 
-# Define a few command handlers. These usually take the two arguments bot and
-# update. Error handlers also receive the raised TelegramError object in error.
+# Define a few command handlers.  These usually take the two arguments bot and
+# update.  Error handlers also receive the raised TelegramError object in
+# error.
 def start(bot, update, job_queue, chat_data):
     update.message.reply_text('Hi! Started!')
     chat_id = update.message.chat_id
@@ -43,10 +45,10 @@ def getstatus(bot, update):
 
 def makecoffe(bot,update):
     print("makecoffe enter")
-    chat_id=update.message.chat_id
+    chat_id = update.message.chat_id
     print(chat_id)
-    insults=["ranciate","va in cueo de to mare!","alsa el cueo e movate!","assame star","moeaghe!","va in cueo va!"]
-    rand=random.randint(0,len(insults)-1)
+    insults = ["ranciate","va in cueo de to mare!","alsa el cueo e movate!","assame star","moeaghe!","va in cueo va!"]
+    rand = random.randint(0,len(insults) - 1)
     print(rand)
     print(insults[rand])
     bot.send_message(chat_id,insults[rand])
@@ -54,26 +56,25 @@ def makecoffe(bot,update):
 
 
 def sendStatus(bot, chat_id):
-        st = pyspeedtest.SpeedTest("speedtestpd1.telecomitalia.it:8080")
+    st = pyspeedtest.SpeedTest("speedtestpd1.telecomitalia.it:8080")
     try:
-     ping=st.ping()
+     ping = st.ping()
     except:
-     ping="error on ping"
+     ping = "error on ping"
     try:
-     download=st.download()
+     download = st.download()
     except:
-     download="error on download"
+     download = "error on download"
     try:
-     upload=st.upload()
+     upload = st.upload()
     except:
-     upload="error on upload"
+     upload = "error on upload"
     bot.send_message(chat_id, 'Ip={}\n{}\nUptime={}\nPing={}\nDW={} - UP={}'.format(commands.getoutput('hostname -I'),
                                                               commands.getoutput('/opt/vc/bin/vcgencmd measure_temp'),
                                                               commands.getoutput('uptime'),
                                                               ping,
                                                               download,
-                                                              upload
-                                                              ))
+                                                              upload))
 
 
 def unset(bot, update, chat_data):
@@ -90,9 +91,8 @@ def unset(bot, update, chat_data):
 #def revive(bot, update, chat_data):
 #    ssh = paramiko.SSHClient()
 #    ssh.connect(server, username=username, password=password)
-#    ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command("psql -U factory -d factory -f /tmp/data.sql")
-
-
+#    ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command("psql -U factory -d
+#    factory -f /tmp/data.sql")
 def main():
     """Run bot."""
     updater = Updater("") 
@@ -107,7 +107,7 @@ def main():
     # Start the Bot
     updater.start_polling()
     # Block until you press Ctrl-C or the process receives SIGINT, SIGTERM or
-    # SIGABRT. This should be used most of the time, since start_polling() is
+    # SIGABRT.  This should be used most of the time, since start_polling() is
     # non-blocking and will stop the bot gracefully.
     updater.idle()
 

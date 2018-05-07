@@ -10,17 +10,17 @@ def main():
         configParser = configparser.RawConfigParser()
         configFilePath = r'bulkMailSender.config'
         configParser.read(configFilePath)
-        smtpAddress='{}:{}'.format(configParser.get('SMTP', 'smtpAddress'),configParser.getint('SMTP', 'smtpPort'))
+        smtpAddress = '{}:{}'.format(configParser.get('SMTP', 'smtpAddress'),configParser.getint('SMTP', 'smtpPort'))
         server = smtplib.SMTP(smtpAddress)
         server.starttls()
         senderaddress = configParser.get('SMTP', 'senderAddress')
-        password=input("inserire la password per l'indirizzo {senderAddres}: ".format(senderAddres=senderaddress))
+        password = input("inserire la password per l'indirizzo {senderAddres}: ".format(senderAddres=senderaddress))
         server.login(senderaddress, password)
         msgText = configParser.get('MAIL', 'body')
         addresses = configParser.get('MAIL', 'addresses').split('\n')
         for address in addresses:
-            companyName=address.split('@')[1].split('.')[0]
-            msgText=msgText.format(company=companyName)
+            companyName = address.split('@')[1].split('.')[0]
+            msgText = msgText.format(company=companyName)
             msg = MIMEMultipart()
             msg['From'] = senderaddress
             msg['To'] = address
