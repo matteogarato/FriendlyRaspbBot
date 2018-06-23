@@ -5,11 +5,11 @@ Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
 import os
-import commands
 import pyspeedtest
 import random
-from telegram.ext import Updater, CommandHandler
+import subprocess
 from subprocess import call
+from telegram.ext import Updater, CommandHandler
 """"from paramiko import client"""""
 
 
@@ -37,44 +37,56 @@ def alarm(bot, job):
 
 def getstatus(bot, update):
     chat_id = update.message.chat_id
-    call(["fswebcam", "-d", "/dev/video0", "-F 150", "-r", "1280x720", "666.jpg"])
+    call(["fswebcam", "-d", "/dev/video0", "-F 200", "-r", "1280x720", "666.jpg"])
     bot.send_photo(chat_id=chat_id, photo=open('666.jpg', 'rb'))
     os.remove('666.jpg')
     sendStatus(bot, chat_id)
 
 
 def makecoffe(bot,update):
-    print("makecoffe enter")
     chat_id = update.message.chat_id
-    print(chat_id)
-    insults = ["ranciate","va in cueo de to mare!","alsa el cueo e movate!","assame star","moeaghe!","va in cueo va!"]
+    insults = ["ranciate","va in cueo de to mare!","alsa el cueo e movate!","e' pronto, alzati pure (e portati la cialda)","assame star","moeaghe!","va in cueo va!"]
     rand = random.randint(0,len(insults) - 1)
-    print(rand)
-    print(insults[rand])
-    bot.send_message(chat_id,insults[rand])
-
+    user = update.message.from_user
+    name = user.first_name
+    surname = user.last_name
+    completiinsult = "scolta {} {}, {}".format(name,surname,insults[rand])
+    if"fabio" in name || "alberto" in name:
+        completiinsult="certo capo! lo faccio subito!"
+    bot.send_message(chat_id,completiinsult)
 
 
 def sendStatus(bot, chat_id):
-    st = pyspeedtest.SpeedTest("speedtestpd1.telecomitalia.it:8080")
+    print("sendstatus")
+    st = pyspeedtest.SpeedTest('speedtest.wifi4all.it:8080')
+    print('speedtest initialized')
     try:
-     ping = st.ping()
+     ping = "{0:.2f}".format(st.ping())
+     print(ping)
     except:
      ping = "error on ping"
+     print("error ping")
     try:
-     download = st.download()
+     download = "{0:.2f}".format(st.download())
+     print(download)
     except:
      download = "error on download"
+     print("error download")
     try:
-     upload = st.upload()
+     upload = "{0:.2f}".format(st.upload())
+     print(upload)
     except:
      upload = "error on upload"
-    bot.send_message(chat_id, 'Ip={}\n{}\nUptime={}\nPing={}\nDW={} - UP={}'.format(commands.getoutput('hostname -I'),
-                                                              commands.getoutput('/opt/vc/bin/vcgencmd measure_temp'),
-                                                              commands.getoutput('uptime'),
-                                                              ping,
-                                                              download,
-                                                              upload))
+     print("error upload")
+    print('before sending')
+    ip=subprocess.check_output(["hostname", "-I"])
+    print(ip)
+    temp=subprocess.check_output(["/opt/vc/bin/vcgencmd measure_temp"])
+    print(temp)
+    uptime=subprocess.check_output(['uptime'])
+    print(uptime)
+    bot.send_message(chat_id, 'Ip={}{}Uptime={}Ping={}DW={}UP={}'.format(ip,temp,uptime,ping,download,upload))
+
 
 
 def unset(bot, update, chat_data):
