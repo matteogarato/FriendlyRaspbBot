@@ -7,6 +7,7 @@ bot.
 import os
 import pyspeedtest
 import random
+import configparser
 import subprocess
 from subprocess import call
 from telegram.ext import Updater, CommandHandler
@@ -34,6 +35,11 @@ def alarm(bot, job):
     """Send the alarm message."""
     sendStatus(bot, job.context)
 
+def getTrafficImage(bot,update):
+    addresses = configParser.get('BOTCONFIG', 'urls').split('\n')
+    #for address in addresses
+
+
 
 def getstatus(bot, update):
     chat_id = update.message.chat_id
@@ -45,20 +51,21 @@ def getstatus(bot, update):
 
 def makecoffe(bot,update):
     chat_id = update.message.chat_id
-    insults = ["ranciate","va in cueo de to mare!","alsa el cueo e movate!","e' pronto, alzati pure (e portati la cialda)","assame star","moeaghe!","va in cueo va!"]
+    insults =configParser.get('BOTCONFIG', 'insults').split(',') 
     rand = random.randint(0,len(insults) - 1)
     user = update.message.from_user
     name = user.first_name
     surname = user.last_name
     completiinsult = "scolta {} {}, {}".format(name,surname,insults[rand])
-    if"fabio" in name || "alberto" in name:
+    notToInsult=configParser.get('BOTCONFIG', 'noToInsult').split(',')
+    if any(notToInsult in name for notToInsult in a):
         completiinsult="certo capo! lo faccio subito!"
     bot.send_message(chat_id,completiinsult)
 
 
 def sendStatus(bot, chat_id):
     print("sendstatus")
-    st = pyspeedtest.SpeedTest('speedtest.wifi4all.it:8080')
+    st = pyspeedtest.SpeedTest(configParser.get('BOTCONFIG', 'speedtestUrl'))
     print('speedtest initialized')
     try:
      ping = "{0:.2f}".format(st.ping())
@@ -79,11 +86,11 @@ def sendStatus(bot, chat_id):
      upload = "error on upload"
      print("error upload")
     print('before sending')
-    ip=subprocess.check_output(["hostname", "-I"])
+    ip=subprocess.check_output(["hostname", "-I"]).decode('utf-8')
     print(ip)
-    temp=subprocess.check_output(["/opt/vc/bin/vcgencmd measure_temp"])
+    temp="error"
     print(temp)
-    uptime=subprocess.check_output(['uptime'])
+    uptime=subprocess.check_output(['uptime']).decode('utf-8')
     print(uptime)
     bot.send_message(chat_id, 'Ip={}{}Uptime={}Ping={}DW={}UP={}'.format(ip,temp,uptime,ping,download,upload))
 
@@ -107,7 +114,10 @@ def unset(bot, update, chat_data):
 #    factory -f /tmp/data.sql")
 def main():
     """Run bot."""
-    updater = Updater("") 
+    configParser = configparser.RawConfigParser()
+    configFilePath = r'TelegramBot.config'
+    configParser.read(configFilePath)
+    updater = Updater(configParser.get('TELEGRAM', 'botId')) 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
     # on different commands - answer in Telegram
@@ -115,6 +125,7 @@ def main():
     dp.add_handler(CommandHandler("help", start))
     dp.add_handler(CommandHandler("getstatus", getstatus))
     dp.add_handler(CommandHandler("makecoffe", makecoffe))
+    dp.add_handler(CommandHandler("getTrafficImage", getTrafficImage))
     dp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
     # Start the Bot
     updater.start_polling()
