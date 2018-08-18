@@ -9,10 +9,13 @@ import pyspeedtest
 import random
 import configparser
 import subprocess
+import urllib.request 
 from subprocess import call
 from telegram.ext import Updater, CommandHandler
 """"from paramiko import client"""""
-
+configParser = configparser.RawConfigParser()
+configFilePath = r'TelegramBot.config'
+configParser.read(configFilePath)
 
 # Define a few command handlers.  These usually take the two arguments bot and
 # update.  Error handlers also receive the raised TelegramError object in
@@ -36,8 +39,12 @@ def alarm(bot, job):
     sendStatus(bot, job.context)
 
 def getTrafficImage(bot,update):
-    addresses = configParser.get('BOTCONFIG', 'urls').split('\n')
-    #for address in addresses
+    chat_id = update.message.chat_id
+    addresses = configParser.get('BOTCONFIG', 'urls').split(',')
+    for address in addresses
+        urllib.request.urlretrieve(address, "getImg.jpg")
+        bot.send_photo(chat_id=chat_id, photo=open('getImg.jpg', 'rb'))
+        os.remove('getImg.jpg')
 
 
 
@@ -114,10 +121,7 @@ def unset(bot, update, chat_data):
 #    factory -f /tmp/data.sql")
 def main():
     """Run bot."""
-    configParser = configparser.RawConfigParser()
-    configFilePath = r'TelegramBot.config'
-    configParser.read(configFilePath)
-    updater = Updater(configParser.get('TELEGRAM', 'botId')) 
+    updater = Updater(configParser.get('BOTCONFIG', 'botId')) 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
     # on different commands - answer in Telegram
