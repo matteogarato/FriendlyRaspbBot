@@ -37,6 +37,9 @@ def alarm(bot, job):
     sendStatus(bot, job.context)
 
 def getTrafficImage(bot,update):
+    configParser = configparser.RawConfigParser()
+    configFilePath = r'TelegramBot.config'
+    configParser.read(configFilePath)
     print("trafficimage")
     chat_id = update.message.chat_id
     print(chat_id)
@@ -59,6 +62,10 @@ def getstatus(bot, update):
     sendStatus(bot, chat_id)
 
 def makecoffe(bot,update):
+    configParser = configparser.RawConfigParser()
+    configFilePath = r'TelegramBot.config'
+    configParser.read(configFilePath)
+    print("config parser readed")
     chat_id = update.message.chat_id
     insults = configParser.get('BOTCONFIG', 'insults').split(',') 
     rand = random.randint(0,len(insults) - 1)
@@ -72,6 +79,10 @@ def makecoffe(bot,update):
     bot.send_message(chat_id,completiinsult)
 
 def sendStatus(bot, chat_id):
+    configParser = configparser.RawConfigParser()
+    configFilePath = r'TelegramBot.config'
+    configParser.read(configFilePath)
+    print("config parser readed")
     print("sendstatus")
     st = pyspeedtest.SpeedTest(configParser.get('BOTCONFIG', 'speedtestUrl'))
     print('speedtest initialized')
