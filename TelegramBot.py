@@ -125,6 +125,7 @@ def main():
     configParser = configparser.RawConfigParser()
     configFilePath = r'TelegramBot.config'
     configParser.read(configFilePath)
+    print("config parser readed")
     updater = Updater(configParser.get('BOTCONFIG', 'botId')) 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
