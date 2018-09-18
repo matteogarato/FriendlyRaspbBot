@@ -39,6 +39,7 @@ def alarm(bot, job):
 def getTrafficImage(bot,update):
     print("trafficimage")
     chat_id = update.message.chat_id
+    print(chat_id)
     addresses = configParser.get('BOTCONFIG', 'urls').split(',')
     print(addresses)
     for address in addresses:
