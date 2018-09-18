@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Simple Bot to send timed Telegram messages.
+"""Bot to send timed Telegram messages.
 Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
@@ -13,9 +13,7 @@ import urllib.request
 from subprocess import call
 from telegram.ext import Updater, CommandHandler
 """"from paramiko import client"""""
-configParser = configparser.RawConfigParser()
-configFilePath = r'TelegramBot.config'
-configParser.read(configFilePath)
+
 
 # Define a few command handlers.  These usually take the two arguments bot and
 # update.  Error handlers also receive the raised TelegramError object in
@@ -41,11 +39,10 @@ def alarm(bot, job):
 def getTrafficImage(bot,update):
     chat_id = update.message.chat_id
     addresses = configParser.get('BOTCONFIG', 'urls').split(',')
-    for address in addresses
+    for address in addresses:
         urllib.request.urlretrieve(address, "getImg.jpg")
         bot.send_photo(chat_id=chat_id, photo=open('getImg.jpg', 'rb'))
         os.remove('getImg.jpg')
-
 
 
 def getstatus(bot, update):
@@ -55,20 +52,18 @@ def getstatus(bot, update):
     os.remove('666.jpg')
     sendStatus(bot, chat_id)
 
-
 def makecoffe(bot,update):
     chat_id = update.message.chat_id
-    insults =configParser.get('BOTCONFIG', 'insults').split(',') 
+    insults = configParser.get('BOTCONFIG', 'insults').split(',') 
     rand = random.randint(0,len(insults) - 1)
     user = update.message.from_user
     name = user.first_name
     surname = user.last_name
     completiinsult = "scolta {} {}, {}".format(name,surname,insults[rand])
-    notToInsult=configParser.get('BOTCONFIG', 'noToInsult').split(',')
+    notToInsult = configParser.get('BOTCONFIG', 'noToInsult').split(',')
     if any(notToInsult in name for notToInsult in a):
-        completiinsult="certo capo! lo faccio subito!"
+        completiinsult = "certo capo! lo faccio subito!"
     bot.send_message(chat_id,completiinsult)
-
 
 def sendStatus(bot, chat_id):
     print("sendstatus")
@@ -93,11 +88,11 @@ def sendStatus(bot, chat_id):
      upload = "error on upload"
      print("error upload")
     print('before sending')
-    ip=subprocess.check_output(["hostname", "-I"]).decode('utf-8')
+    ip = subprocess.check_output(["hostname", "-I"]).decode('utf-8')
     print(ip)
-    temp="error"
+    temp = "error"
     print(temp)
-    uptime=subprocess.check_output(['uptime']).decode('utf-8')
+    uptime = subprocess.check_output(['uptime']).decode('utf-8')
     print(uptime)
     bot.send_message(chat_id, 'Ip={}{}Uptime={}Ping={}DW={}UP={}'.format(ip,temp,uptime,ping,download,upload))
 
@@ -121,6 +116,9 @@ def unset(bot, update, chat_data):
 #    factory -f /tmp/data.sql")
 def main():
     """Run bot."""
+    configParser = configparser.RawConfigParser()
+    configFilePath = r'TelegramBot.config'
+    configParser.read(configFilePath)
     updater = Updater(configParser.get('BOTCONFIG', 'botId')) 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
