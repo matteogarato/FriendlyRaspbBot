@@ -36,7 +36,7 @@ def alarm(bot, job):
     """Send the alarm message."""
     sendStatus(bot, job.context)
 
-def getTrafficImage(bot,update):
+def getimage(bot,update):
     configParser = configparser.RawConfigParser()
     configFilePath = r'TelegramBot.config'
     configParser.read(configFilePath)
@@ -145,7 +145,7 @@ def main():
     dp.add_handler(CommandHandler("help", start))
     dp.add_handler(CommandHandler("getstatus", getstatus))
     dp.add_handler(CommandHandler("makecoffe", makecoffe))
-    dp.add_handler(CommandHandler("getTrafficImage", getTrafficImage))
+    dp.add_handler(CommandHandler("getimage", getimage))
     dp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
     # Start the Bot
     updater.start_polling()
