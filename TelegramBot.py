@@ -37,11 +37,16 @@ def alarm(bot, job):
     sendStatus(bot, job.context)
 
 def getTrafficImage(bot,update):
+    print("trafficimage")
     chat_id = update.message.chat_id
     addresses = configParser.get('BOTCONFIG', 'urls').split(',')
+    print(addresses)
     for address in addresses:
+        print(address)
         urllib.request.urlretrieve(address, "getImg.jpg")
+        print("requestDone")
         bot.send_photo(chat_id=chat_id, photo=open('getImg.jpg', 'rb'))
+        print("photo sended")
         os.remove('getImg.jpg')
 
 
