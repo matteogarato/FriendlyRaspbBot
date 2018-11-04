@@ -107,12 +107,16 @@ def sendStatus(bot, chat_id):
     print('before sending')
     ip = subprocess.check_output(["hostname", "-I"]).decode('utf-8')
     print(ip)
-    temp = "error"
+    temp = measure_temp
     print(temp)
     uptime = subprocess.check_output(['uptime']).decode('utf-8')
     print(uptime)
     bot.send_message(chat_id, 'Ip={}{}Uptime={}Ping={}DW={}UP={}'.format(ip,temp,uptime,ping,download,upload))
 
+
+def measure_temp():
+        temp = os.popen("vcgencmd measure_temp").readline()
+        return temp
 
 
 def unset(bot, update, chat_data):
