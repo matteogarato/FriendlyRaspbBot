@@ -21,6 +21,9 @@
   <ItemGroup>
     <Compile Include="bulkMailSender.py" />
     <Compile Include="TelegramBot.py" />
+    <Compile Include="_iniConverter.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>
