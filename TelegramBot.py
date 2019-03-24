@@ -64,7 +64,7 @@ def gethighwayvid(bot,update):
     print(addresses)
     name = "666Devil.mp4"
     for address in addresses:
-        r = requests.get('url')
+        r = requests.get(address)
         f = open(name,'wb')
         for chunk in r.iter_content(chunk_size=255): 
             if chunk: # filter out keep-alive new chunks
