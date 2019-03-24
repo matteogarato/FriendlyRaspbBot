@@ -10,6 +10,7 @@ import random
 import configparser
 import subprocess
 import urllib.request 
+import requests
 from subprocess import call
 from telegram.ext import Updater, CommandHandler
 """"from paramiko import client"""""
@@ -45,20 +46,40 @@ def getimage(bot,update):
     print(chat_id)
     addresses = configParser.get('BOTCONFIG', 'urls').split(',')
     print(addresses)
+    imagename = 'getImg.jpg'
     for address in addresses:
         print(address)
-        urllib.request.urlretrieve(address, "getImg.jpg")
+        urllib.request.urlretrieve(address, imagename)
         print("requestDone")
-        bot.send_photo(chat_id=chat_id, photo=open('getImg.jpg', 'rb'))
+        bot.send_photo(chat_id=chat_id, photo=open(imagename, 'rb'))
         print("photo sended")
-        os.remove('getImg.jpg')
+        os.remove(imagename)
+
+
+def gethighwayvid(bot,update):
+    configParser = configparser.RawConfigParser()
+    configFilePath = r'TelegramBot.config'
+    configParser.read(configFilePath)
+    addresses = configParser.get('BOTCONFIG', 'urlsHighway').split(',')
+    print(addresses)
+    name = "666Devil.mp4"
+    for address in addresses:
+        r = requests.get('url')
+        f = open(name,'wb')
+        for chunk in r.iter_content(chunk_size=255): 
+            if chunk: # filter out keep-alive new chunks
+                f.write(chunk)
+        f.close()
+        bot.send_video(chat_id=update.message.chat_id, video=open(name, 'rb'), supports_streaming=True)
+        os.remove(name)
 
 
 def getstatus(bot, update):
     chat_id = update.message.chat_id
-    call(["fswebcam", "-d", "/dev/video0", "-F 200", "-r", "1280x720", "666.jpg"])
-    bot.send_photo(chat_id=chat_id, photo=open('666.jpg', 'rb'))
-    os.remove('666.jpg')
+    #call(["fswebcam", "-d", "/dev/video0", "-F 200", "-r", "1280x720",
+    #"666.jpg"])
+    #bot.send_photo(chat_id=chat_id, photo=open('666.jpg', 'rb'))
+    #os.remove('666.jpg')
     sendStatus(bot, chat_id)
 
 def makecoffe(bot,update):
@@ -145,6 +166,7 @@ def main():
     dp.add_handler(CommandHandler("getstatus", getstatus))
     dp.add_handler(CommandHandler("makecoffe", makecoffe))
     dp.add_handler(CommandHandler("getimage", getimage))
+    dp.add_handler(CommandHandler("gethighwayvid", gethighwayvid))
     dp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
     # Start the Bot
     updater.start_polling()
