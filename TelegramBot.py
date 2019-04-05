@@ -5,14 +5,30 @@ Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
 import os
+import time
 import pyspeedtest
 import random
 import configparser
 import subprocess
-import urllib.request 
+import urllib.request
 import requests
 from subprocess import call
 from telegram.ext import Updater, CommandHandler
+import Adafruit_CharLCD as LCD
+# Raspberry Pi pin setup
+lcd_rs = 18
+lcd_en = 23
+lcd_d4 = 24
+lcd_d5 = 16
+lcd_d6 = 20
+lcd_d7 = 21
+lcd_backlight = 2
+
+# Define LCD column and row size for 16x2 LCD.
+lcd_columns = 16
+lcd_rows = 2
+
+lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
 """"from paramiko import client"""""
 
 
@@ -38,6 +54,7 @@ def alarm(bot, job):
     sendStatus(bot, job.context)
 
 def getimage(bot,update):
+    printsenderonlcd(update)
     configParser = configparser.RawConfigParser()
     configFilePath = r'TelegramBot.config'
     configParser.read(configFilePath)
@@ -57,16 +74,20 @@ def getimage(bot,update):
 
 
 def gethighwayvid(bot,update):
+    print("autostrada")
+    printsenderonlcd(update)
     configParser = configparser.RawConfigParser()
     configFilePath = r'TelegramBot.config'
     configParser.read(configFilePath)
     addresses = configParser.get('BOTCONFIG', 'urlsHighway').split(',')
     print(addresses)
     name = "666Devil.mp4"
+    print("prima di ciclo adress")
     for address in addresses:
+        print(address)
         r = requests.get(address)
         f = open(name,'wb')
-        for chunk in r.iter_content(chunk_size=255): 
+        for chunk in r.iter_content(chunk_size=255):
             if chunk: # filter out keep-alive new chunks
                 f.write(chunk)
         f.close()
@@ -75,6 +96,7 @@ def gethighwayvid(bot,update):
 
 
 def getstatus(bot, update):
+    printsenderonlcd(update)
     chat_id = update.message.chat_id
     #call(["fswebcam", "-d", "/dev/video0", "-F 200", "-r", "1280x720",
     #"666.jpg"])
@@ -83,12 +105,13 @@ def getstatus(bot, update):
     sendStatus(bot, chat_id)
 
 def makecoffe(bot,update):
+    printsenderonlcd(update)
     configParser = configparser.RawConfigParser()
     configFilePath = r'TelegramBot.config'
     configParser.read(configFilePath)
     print("config parser readed")
     chat_id = update.message.chat_id
-    insults = configParser.get('BOTCONFIG', 'insults').split(',') 
+    insults = configParser.get('BOTCONFIG', 'insults').split(',')
     rand = random.randint(0,len(insults) - 1)
     user = update.message.from_user
     name = user.first_name
@@ -100,31 +123,7 @@ def makecoffe(bot,update):
     bot.send_message(chat_id,completiinsult)
 
 def sendStatus(bot, chat_id):
-    configParser = configparser.RawConfigParser()
-    configFilePath = r'TelegramBot.config'
-    configParser.read(configFilePath)
-    print("config parser readed")
     print("sendstatus")
-    st = pyspeedtest.SpeedTest(configParser.get('BOTCONFIG', 'speedtestUrl'))
-    print('speedtest initialized')
-    try:
-     ping = "{0:.2f}".format(st.ping())
-     print(ping)
-    except:
-     ping = "error on ping"
-     print("error ping")
-    try:
-     download = "{0:.2f}".format(st.download())
-     print(download)
-    except:
-     download = "error on download"
-     print("error download")
-    try:
-     upload = "{0:.2f}".format(st.upload())
-     print(upload)
-    except:
-     upload = "error on upload"
-     print("error upload")
     print('before sending')
     ip = subprocess.check_output(["hostname", "-I"]).decode('utf-8')
     print(ip)
@@ -132,7 +131,43 @@ def sendStatus(bot, chat_id):
     print(temp)
     uptime = subprocess.check_output(['uptime']).decode('utf-8')
     print(uptime)
-    bot.send_message(chat_id, 'Ip={}{}Uptime={}Ping={}DW={}UP={}'.format(ip,temp,uptime,ping,download,upload))
+    bot.send_message(chat_id, 'Ip={}{}Uptime={}'.format(ip,temp,uptime))
+
+def networkstats(bot, update):
+     printsenderonlcd(update)
+     configParser = configparser.RawConfigParser()
+     configFilePath = r'TelegramBot.config'
+     configParser.read(configFilePath)
+     st = pyspeedtest.SpeedTest(configParser.get('BOTCONFIG', 'speedtestUrl'))
+     print('speedtest initialized')
+     try:
+        ping = "{0:.2f}".format(st.ping())
+        print(ping)
+     except:
+        ping = "error on ping"
+        print("error ping")
+     try:
+        download = "{0:.2f}".format(st.download())
+        print(download)
+     except:
+        download = "error on download"
+        print("error download")
+     try:
+        upload = "{0:.2f}".format(st.upload())
+        print(upload)
+     except:
+        upload = "error on upload"
+        print("error upload")
+     bot.send_message(chat_id, 'Ping={}DW={}UP={}'.format(uptime,ping,download,upload))
+
+def printsenderonlcd(update):
+    user = update.message.from_user
+    messagefrom = "messaggio da".center(16)
+    lcd.clear()
+    lcd.message(messagefrom)
+    lcd.message("\n")
+    sender = "{}".format(user.username).center(16)
+    lcd.message(sender)
 
 
 def unset(bot, update, chat_data):
@@ -157,19 +192,21 @@ def main():
     configFilePath = r'TelegramBot.config'
     configParser.read(configFilePath)
     print("config parser readed")
-    updater = Updater(configParser.get('BOTCONFIG', 'botId')) 
+    updater = Updater(configParser.get('BOTCONFIG', 'botId'))
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start, pass_job_queue=True, pass_chat_data=True))
     dp.add_handler(CommandHandler("help", start))
     dp.add_handler(CommandHandler("getstatus", getstatus))
+    dp.add_handler(CommandHandler("networkstats", networkstats))
     dp.add_handler(CommandHandler("makecoffe", makecoffe))
     dp.add_handler(CommandHandler("getimage", getimage))
     dp.add_handler(CommandHandler("gethighwayvid", gethighwayvid))
     dp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
     # Start the Bot
-    updater.start_polling()
+    updater.start_polling(5)
+
     # Block until you press Ctrl-C or the process receives SIGINT, SIGTERM or
     # SIGABRT.  This should be used most of the time, since start_polling() is
     # non-blocking and will stop the bot gracefully.
