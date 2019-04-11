@@ -170,6 +170,27 @@ def printsenderonlcd(update):
     lcd.message(sender)
 
 
+def textmessagerecieved(bot,update):
+    user = update.message.from_user
+    print("ricevuto:{}".format(update.message.text))
+    scroltext(update.message.text,user.username)
+
+
+def scrolltext(text,username):
+    outputMessage = "{}:\n".format(username).center(16)
+    chardiff = text.length - 16
+    if chardiff > 0:
+        for i in range(0, chardiff):
+            outputMessage+= "{}".format(text).center(16)
+            lcd.clear()
+            lcd.message(outputMessage)
+            sleep(0.4)
+    else:
+        outputMessage+= "{}".format(text).center(16)
+        lcd.clear()
+        lcd.message(outputMessage)
+
+
 def unset(bot, update, chat_data):
     """Remove the job if the user changed their mind."""
     if 'job' not in chat_data:
@@ -203,6 +224,8 @@ def main():
     dp.add_handler(CommandHandler("makecoffe", makecoffe))
     dp.add_handler(CommandHandler("getimage", getimage))
     dp.add_handler(CommandHandler("gethighwayvid", gethighwayvid))
+    echo_handler = MessageHandler(Filters.text, echo)
+    dp.add_handler(echo_handler)
     dp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
     # Start the Bot
     updater.start_polling(5)
