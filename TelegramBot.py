@@ -13,7 +13,7 @@ import subprocess
 import urllib.request
 import requests
 from subprocess import call
-from telegram.ext import Updater, CommandHandler
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import Adafruit_CharLCD as LCD
 # Raspberry Pi pin setup
 lcd_rs = 18
@@ -29,8 +29,6 @@ lcd_columns = 16
 lcd_rows = 2
 
 lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
-""""from paramiko import client"""""
-
 
 # Define a few command handlers.  These usually take the two arguments bot and
 # update.  Error handlers also receive the raised TelegramError object in
@@ -173,20 +171,21 @@ def printsenderonlcd(update):
 def textmessagerecieved(bot,update):
     user = update.message.from_user
     print("ricevuto:{}".format(update.message.text))
-    scroltext(update.message.text,user.username)
-
-
-def scrolltext(text,username):
-    outputMessage = "{}:\n".format(username).center(16)
-    chardiff = text.length - 16
+    outputMessage = "{}:\n".format(user.username).center(16)
+    recivedText = update.message.text
+    #recivedText = lstrip(rstrip(recivedText))
+    chardiff = len(recivedText) - 16
+    print(chardiff)
     if chardiff > 0:
-        for i in range(0, chardiff):
-            outputMessage+= "{}".format(text).center(16)
+        for i in range(0, chardiff + 1):
+            outputMessageIter = "{}:\n".format(user.username)
+            outputMessageIter+= "{}".format(recivedText[i:16 + i])
             lcd.clear()
-            lcd.message(outputMessage)
-            sleep(0.4)
+            lcd.message(outputMessageIter)
+            time.sleep(0.5)
     else:
-        outputMessage+= "{}".format(text).center(16)
+        recivedText = (recivedText).center(16)
+        outputMessage+= "{}".format(recivedText)
         lcd.clear()
         lcd.message(outputMessage)
 
@@ -202,11 +201,6 @@ def unset(bot, update, chat_data):
     update.message.reply_text('Timer successfully unset!')
 
 
-#def revive(bot, update, chat_data):
-#    ssh = paramiko.SSHClient()
-#    ssh.connect(server, username=username, password=password)
-#    ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command("psql -U factory -d
-#    factory -f /tmp/data.sql")
 def main():
     """Run bot."""
     configParser = configparser.RawConfigParser()
@@ -224,7 +218,7 @@ def main():
     dp.add_handler(CommandHandler("makecoffe", makecoffe))
     dp.add_handler(CommandHandler("getimage", getimage))
     dp.add_handler(CommandHandler("gethighwayvid", gethighwayvid))
-    echo_handler = MessageHandler(Filters.text, echo)
+    echo_handler = MessageHandler(Filters.text, textmessagerecieved)
     dp.add_handler(echo_handler)
     dp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
     # Start the Bot
