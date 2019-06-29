@@ -25,5 +25,12 @@
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ResourceManagerDemon\ResourceManagerDemon\ResourceManagerDemon.pyproj">
+      <Name>ResourceManagerDemon</Name>
+      <Project>{47131286-1f32-447f-acea-e4bd7f59138e}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>

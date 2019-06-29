@@ -12,9 +12,11 @@ import configparser
 import subprocess
 import urllib.request
 import requests
+import client
 from subprocess import call
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import Adafruit_CharLCD as LCD
+import Adafruit_DHT
 # Raspberry Pi pin setup
 lcd_rs = 18
 lcd_en = 23
@@ -29,6 +31,9 @@ lcd_columns = 16
 lcd_rows = 2
 
 lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
+
+DHT11 = Adafruit_DHT.DHT11                                   
+DHT11_PIN = 3
 
 # Define a few command handlers.  These usually take the two arguments bot and
 # update.  Error handlers also receive the raised TelegramError object in
@@ -130,6 +135,20 @@ def sendStatus(bot, chat_id):
     uptime = subprocess.check_output(['uptime']).decode('utf-8')
     print(uptime)
     bot.send_message(chat_id, 'Ip={}{}Uptime={}'.format(ip,temp,uptime))
+
+
+def tempReading():
+    dictTempHum = dict()
+    for i in range(0,10,1):                                                  
+        humidity, temperature = Adafruit_DHT.read_retry(DHT11, DHT11_PIN, retries=2, delay_seconds=1) 
+        if umidita is not None and temperatura is not None:      
+            dictTempHum.append(humidity,temperature)
+            time.sleep(1) 
+    temp = 0,0
+    hum = 0,0
+    for j in range(0,dictTempHum.count,1):
+        tempHumReaded
+    return dictTempHum
 
 def networkstats(bot, update):
      printsenderonlcd(update)
