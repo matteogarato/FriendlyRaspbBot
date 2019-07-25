@@ -12,7 +12,7 @@ import configparser
 import subprocess
 import urllib.request
 import requests
-import client
+import client 
 from subprocess import call
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import Adafruit_CharLCD as LCD
@@ -180,11 +180,12 @@ def networkstats(bot, update):
 def printsenderonlcd(update):
     user = update.message.from_user
     messagefrom = "messaggio da".center(16)
-    lcd.clear()
-    lcd.message(messagefrom)
-    lcd.message("\n")
+    #lcd.clear()
+    #lcd.message(messagefrom)
+    #lcd.message("\n")
     sender = "{}".format(user.username).center(16)
-    lcd.message(sender)
+    #lcd.message(sender)
+    client.sendMessage(messagefrom,sender)
 
 
 def textmessagerecieved(bot,update):
@@ -192,21 +193,22 @@ def textmessagerecieved(bot,update):
     print("ricevuto:{}".format(update.message.text))
     outputMessage = "{}:\n".format(user.username).center(16)
     recivedText = update.message.text
+    client.sendMessage(outputMessage,recivedText)
     #recivedText = lstrip(rstrip(recivedText))
-    chardiff = len(recivedText) - 16
-    print(chardiff)
-    if chardiff > 0:
-        for i in range(0, chardiff + 1):
-            outputMessageIter = "{}:\n".format(user.username)
-            outputMessageIter+= "{}".format(recivedText[i:16 + i])
-            lcd.clear()
-            lcd.message(outputMessageIter)
-            time.sleep(0.5)
-    else:
-        recivedText = (recivedText).center(16)
-        outputMessage+= "{}".format(recivedText)
-        lcd.clear()
-        lcd.message(outputMessage)
+    #chardiff = len(recivedText) - 16
+    #print(chardiff)
+    #if chardiff > 0:
+    #    for i in range(0, chardiff + 1):
+    #        outputMessageIter = "{}:\n".format(user.username)
+    #        outputMessageIter+= "{}".format(recivedText[i:16 + i])
+    #        lcd.clear()
+    #        lcd.message(outputMessageIter)
+    #        time.sleep(0.5)
+    #else:
+    #    recivedText = (recivedText).center(16)
+    #    outputMessage+= "{}".format(recivedText)
+    #    lcd.clear()
+    #    lcd.message(outputMessage)
 
 
 def unset(bot, update, chat_data):
