@@ -15,26 +15,8 @@ import requests
 import client 
 from subprocess import call
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-import Adafruit_CharLCD as LCD
-import Adafruit_DHT
-# Raspberry Pi pin setup
-lcd_rs = 18
-lcd_en = 23
-lcd_d4 = 24
-lcd_d5 = 16
-lcd_d6 = 20
-lcd_d7 = 21
-lcd_backlight = 2
 
-# Define LCD column and row size for 16x2 LCD.
-lcd_columns = 16
-lcd_rows = 2
-
-lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
-
-DHT11 = Adafruit_DHT.DHT11                                   
-DHT11_PIN = 3
-
+clientInstance = client.Client()
 # Define a few command handlers.  These usually take the two arguments bot and
 # update.  Error handlers also receive the raised TelegramError object in
 # error.
@@ -184,8 +166,8 @@ def printsenderonlcd(update):
     #lcd.message(messagefrom)
     #lcd.message("\n")
     sender = "{}".format(user.username).center(16)
-    #lcd.message(sender)
-    client.sendMessage(messagefrom,sender)
+    #lcd.message(sender)    
+    clientInstance.sendMessage(messagefrom,sender)
 
 
 def textmessagerecieved(bot,update):
