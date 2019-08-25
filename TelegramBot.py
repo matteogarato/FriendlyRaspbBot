@@ -12,7 +12,7 @@ import configparser
 import subprocess
 import urllib.request
 import requests
-import client 
+import Client 
 from subprocess import call
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
