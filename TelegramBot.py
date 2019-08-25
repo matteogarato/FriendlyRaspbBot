@@ -16,7 +16,7 @@ import client
 from subprocess import call
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
-clientInstance = client.Client()
+clientInstance = client.Client('192.168.3.105')
 # Define a few command handlers.  These usually take the two arguments bot and
 # update.  Error handlers also receive the raised TelegramError object in
 # error.
