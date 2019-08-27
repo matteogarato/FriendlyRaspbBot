@@ -16,7 +16,7 @@ import Client
 from subprocess import call
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
-clientInstance = client.Client('192.168.3.105')
+clientInstance = Client.Client('192.168.3.105')
 # Define a few command handlers.  These usually take the two arguments bot and
 # update.  Error handlers also receive the raised TelegramError object in
 # error.
@@ -86,7 +86,7 @@ def getstatus(bot, update):
     #call(["fswebcam", "-d", "/dev/video0", "-F 200", "-r", "1280x720",
     #"666.jpg"])
     #bot.send_photo(chat_id=chat_id, photo=open('666.jpg', 'rb'))
-    #os.remove('666.jpg')
+    #os.remove('666.jpg') 
     sendStatus(bot, chat_id)
 
 def makecoffe(bot,update):
