@@ -119,19 +119,6 @@ def sendStatus(bot, chat_id):
     bot.send_message(chat_id, 'Ip={}{}Uptime={}'.format(ip,temp,uptime))
 
 
-def tempReading():
-    dictTempHum = dict()
-    for i in range(0,10,1):                                                  
-        humidity, temperature = Adafruit_DHT.read_retry(DHT11, DHT11_PIN, retries=2, delay_seconds=1) 
-        if umidita is not None and temperatura is not None:      
-            dictTempHum.append(humidity,temperature)
-            time.sleep(1) 
-    temp = 0,0
-    hum = 0,0
-    for j in range(0,dictTempHum.count,1):
-        tempHumReaded
-    return dictTempHum
-
 def networkstats(bot, update):
      printsenderonlcd(update)
      configParser = configparser.RawConfigParser()
@@ -162,11 +149,7 @@ def networkstats(bot, update):
 def printsenderonlcd(update):
     user = update.message.from_user
     messagefrom = "messaggio da".center(16)
-    #lcd.clear()
-    #lcd.message(messagefrom)
-    #lcd.message("\n")
     sender = "{}".format(user.username).center(16)
-    #lcd.message(sender)    
     clientInstance.sendMessage(messagefrom,sender)
 
 
@@ -176,21 +159,6 @@ def textmessagerecieved(bot,update):
     outputMessage = "{}:\n".format(user.username).center(16)
     recivedText = update.message.text
     client.sendMessage(outputMessage,recivedText)
-    #recivedText = lstrip(rstrip(recivedText))
-    #chardiff = len(recivedText) - 16
-    #print(chardiff)
-    #if chardiff > 0:
-    #    for i in range(0, chardiff + 1):
-    #        outputMessageIter = "{}:\n".format(user.username)
-    #        outputMessageIter+= "{}".format(recivedText[i:16 + i])
-    #        lcd.clear()
-    #        lcd.message(outputMessageIter)
-    #        time.sleep(0.5)
-    #else:
-    #    recivedText = (recivedText).center(16)
-    #    outputMessage+= "{}".format(recivedText)
-    #    lcd.clear()
-    #    lcd.message(outputMessage)
 
 
 def unset(bot, update, chat_data):
