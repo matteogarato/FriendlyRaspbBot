@@ -16,7 +16,7 @@ import Client
 from subprocess import call
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
-clientInstance = Client.Client('192.168.3.105')
+clientInstance = Client.Client('127.0.0.1')
 # Define a few command handlers.  These usually take the two arguments bot and
 # update.  Error handlers also receive the raised TelegramError object in
 # error.
@@ -158,7 +158,7 @@ def textmessagerecieved(bot,update):
     print("ricevuto:{}".format(update.message.text))
     outputMessage = "{}:\n".format(user.username).center(16)
     recivedText = update.message.text
-    client.sendMessage(outputMessage,recivedText)
+    clientInstance.sendMessage(outputMessage,recivedText)
 
 
 def unset(bot, update, chat_data):
