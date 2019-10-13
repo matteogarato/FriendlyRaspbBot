@@ -26,6 +26,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="requirements.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\ResourceManagerDemon\ResourceManagerDemon\ResourceManagerDemon.pyproj">
       <Name>ResourceManagerDemon</Name>
       <Project>{47131286-1f32-447f-acea-e4bd7f59138e}</Project>
