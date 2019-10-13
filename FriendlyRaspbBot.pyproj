@@ -20,6 +20,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="bulkMailSender.py" />
+    <Compile Include="Client.py" />
     <Compile Include="TelegramBot.py" />
     <Compile Include="_iniConverter.py">
       <SubType>Code</SubType>
