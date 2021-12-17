@@ -6,7 +6,7 @@ cryptography==3.3.2
 future==0.17.1
 get==2019.4.13
 idna==2.8
-pip==19.2.3
+pip==21.1
 post==2019.4.13
 public==2019.4.13
 pycparser==2.19
